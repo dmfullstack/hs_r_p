@@ -1,0 +1,35 @@
+{
+  "name": "programming-platform",
+  "version": "0.1.0",
+  "description": "Programming Platform for StackRoute Online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab-dev.stackroute.in/programming-platform/programming-lab.git"
+  },
+  "keywords": [
+    "Programming",
+    "Platform",
+    "Lab",
+    "Eclipse",
+    "Che"
+  ],
+  "author": "Sagar Patke <sagar.patke@stackroute.in>",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.1",
+    "async": "^2.3.0",
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "http-proxy": "^1.16.2",
+    "jsonwebtoken": "^7.3.0",
+    "redis": "^2.7.1",
+    "superagent": "^3.5.2",
+    "superagent-auth-bearer": "^0.0.1"
+  }
+}

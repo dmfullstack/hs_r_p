@@ -1,0 +1,78 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: set hostname
+      hostname:
+        name: "{{ansible_host}}"
+    - name: update hostname file
+      template:
+        src: hostname
+        dest: /etc/hostname
+        owner: root
+        group: root
+        mode: "a=rw,g=r,o=r"
+    - name: update hosts file
+      template:
+        src: hosts
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: "a=rw,g=r,o=r"
+    - name: update hostname
+      hostname:
+        name: "{{ansible_host}}"
+
+- hosts: all
+  become: true
+  roles:
+    - geerlingguy.docker
+    - role: geerlingguy.nodejs
+      nodejs_version: 7.x
+      nodejs_npm_global_packages:
+        - name: yarn
+        - name: forever
+  tasks:
+    - name: mkdir services
+      file:
+        path: /opt/services
+        state: directory
+        mode: 755
+    - name: copy services
+      copy:
+        src: files/docker-compose.yml
+        dest: /opt/services/programming-platform.yml
+    - shell: docker-compose -f /opt/services/programming-platform.yml up -d
+    - name: mkdir /opt/programming-lab
+      file:
+        path: /opt/programming-lab
+        state: directory
+        mode: 755
+    - name: clone project
+      git:
+        repo: https://{{ githubuser | urlencode }}:{{ githubpass }}@gitlab-dev.stackroute.in/programming-platform/programming-lab.git
+        dest: /opt/programming-lab
+        force: yes
+    - name: copy config
+      template:
+        src: config.js
+        dest: /opt/programming-lab/config.js
+    - name: stop agent
+      shell: killall -9 node
+      args:
+        chdir: /opt/programming-lab
+      ignore_errors: yes
+    - name: stop agent
+      shell: /usr/local/lib/npm/bin/forever stop agent
+      args:
+        chdir: /opt/programming-lab
+      ignore_errors: yes
+    - name: install dependencies
+      shell: /usr/local/lib/npm/bin/yarn
+      args:
+        chdir: /opt/programming-lab
+    - name: start agent
+      shell: /usr/local/lib/npm/bin/forever -a start --uid "agent" -c "npm start" .
+      args:
+        chdir: /opt/programming-lab
+        # logs in /root/.forever/agent.log

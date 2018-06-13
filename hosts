@@ -1,0 +1,17 @@
+controller	ansible_host=pro-lab jwt_secret=gcegauhtgcu8878
+
+server0		ansible_host=server0.pro-lab jwt_secret=gcegauhtgcu8878
+server1		ansible_host=server1.pro-lab jwt_secret=gcegauhtgcu8878
+
+[controller-node]
+controller
+
+[agent-node]
+server0
+server1
+
+[controller-node:vars]
+node_type=controller
+
+[agent-node:vars]
+node_type=agent
